@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ModuleConstants;
 
 public class Conversions {
@@ -18,13 +19,15 @@ public class Conversions {
 
     public static double pivot_toDegrees(double encoder_units) {
         encoder_units /= ModuleConstants.PIVOT_GEAR_RATIO;
-        encoder_units *= ModuleConstants.POSITION_TO_ANGLE;
+        encoder_units *= ModuleConstants.POSITION_TO_ANGLE; 
         return encoder_units;
     }
 
     public static double pivot_toNative(double degrees) {
+        SmartDashboard.putNumber("pton", degrees);
         degrees /= ModuleConstants.POSITION_TO_ANGLE;
         degrees *= ModuleConstants.PIVOT_GEAR_RATIO;
+        SmartDashboard.putNumber("pton2", degrees);
         return degrees;
     }
 
@@ -47,6 +50,7 @@ public class Conversions {
         double absolute = angle_toAbsolute(current);
         desired = ( 450 + desired ) %  360;
         current += degree_operator(absolute, desired);
+        SmartDashboard.putNumber("desired angle", desired);
         return current;
     }
 }

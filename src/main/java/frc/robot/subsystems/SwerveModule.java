@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -24,6 +25,8 @@ public class SwerveModule extends SubsystemBase {
   private TalonFX m_pivot;
   private CANCoder m_encoder;
 
+  public double initial_angle;
+
   private static Gains drivePID = new Gains(0.01,0,0,0,0);
   private static Gains pivotPID = new Gains(0.05,0,0,0,0);
 
@@ -32,9 +35,12 @@ public class SwerveModule extends SubsystemBase {
                        int encoderID,
                        boolean reverseDrive ) {
 
+      m_pivot = new TalonFX(pivotID);
+      m_drive = new TalonFX(driveID);
+      m_encoder = new CANCoder(encoderID);
+
       m_pivot.configFactoryDefault(Constants.timeout);
       m_drive.configFactoryDefault(Constants.timeout);
-      m_encoder.configFactoryDefault(Constants.timeout);   
 
       m_pivot.setInverted(true);
       m_drive.setInverted(reverseDrive);
@@ -56,6 +62,7 @@ public class SwerveModule extends SubsystemBase {
       m_drive.setSelectedSensorPosition(0);
       m_pivot.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
       m_pivot.setSelectedSensorPosition(Conversions.pivot_toNative(getEncoder()));
+      SmartDashboard.putNumber("initial angle", Conversions.pivot_toNative(getEncoder()));
   }
 
           private double getEncoder() {
@@ -68,8 +75,11 @@ public class SwerveModule extends SubsystemBase {
           }
 
           private double getAngle() {
-            double angle = m_pivot.getSelectedSensorPosition();
-            return Conversions.pivot_toDegrees(angle);
+            // double angle = m_pivot.getSelectedSensorPosition();
+            // double temp = m_encoder.getAbsolutePosition() - Conversions.pivot_toDegrees(angle);
+            // SmartDashboard.putNumber("debug differnece", temp);
+            // return Conversions.pivot_toDegrees(angle);
+            return getEncoder();
           }
 
           private void setVelocity(double velocity) {
@@ -88,7 +98,12 @@ public class SwerveModule extends SubsystemBase {
     return new SwerveModuleState(speedMetersPerSecond, angle);
   }
 
+  private int i = 0;
+
   public void setState(SwerveModuleState state) {
+    i++;
+    SmartDashboard.putNumber("iterator", i);
+    SmartDashboard.putNumber("debugging for speed", state.speedMetersPerSecond);
     if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
         setAngle( Conversions.kinematicsToAngle( getAngle(), state.angle.getDegrees() ) );
         setVelocity( state.speedMetersPerSecond );
@@ -99,6 +114,7 @@ public class SwerveModule extends SubsystemBase {
 
   public void stop() {
     setVelocity(0);
+    setAngle(0);
   }
 
   @Override

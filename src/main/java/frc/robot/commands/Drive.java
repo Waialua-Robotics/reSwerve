@@ -49,11 +49,19 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double tempX = 0;
+    double tempY = 0;
+    if (get_x.get()>0.6) {
+      tempY = 1.2;
+    }
+    if (get_y.get()>0.6) {
+      tempX = 1.2;
+    }
     swerveDrive.drive(
-        get_x.get(),
-        get_y.get(),
-        get_omega.get(),
-        field_centric.get());
+      tempX,
+      tempY,
+      get_omega.get(),
+      field_centric.get()); 
   }
 
   // Called once the command ends or is interrupted.

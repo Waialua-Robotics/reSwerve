@@ -53,7 +53,7 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 7;
         public static final double PIVOT_GEAR_RATIO = 46;
         public static final double ENCODER_TO_VELOCITY = 40*Math.PI/8062976;
-        public static final double POSITION_TO_ANGLE = 360/2048;    
+        public static final double POSITION_TO_ANGLE = (double) 360/2048;    
         public static final double ENCODER_OFFSET = 270;   // degrees
     }
 

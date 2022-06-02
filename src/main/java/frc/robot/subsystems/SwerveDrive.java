@@ -28,10 +28,10 @@ public class SwerveDrive extends SubsystemBase {
   private static final double HalfLength = DriveConstants.WHEEL_BASE / 2;   // chassis length
      
   public SwerveDrive() {
-      FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, true);
+      FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
       FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
       RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
-      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, false);
+      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
   }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -66,6 +66,10 @@ public class SwerveDrive extends SubsystemBase {
         FR.setState(states[1]);
         RL.setState(states[2]);
         RR.setState(states[3]);
+        SmartDashboard.putString("setFL", states[0].toString());
+        SmartDashboard.putString("setFR", states[1].toString());
+        SmartDashboard.putString("setRL", states[2].toString());
+        SmartDashboard.putString("setRR", states[3].toString());
   }
 
   public void stop() {
@@ -96,5 +100,11 @@ public class SwerveDrive extends SubsystemBase {
 
       SmartDashboard.putString("odometry", odometry.getPoseMeters().toString());
       SmartDashboard.putNumber("Yaw", getYaw().getDegrees() );
+
+      SmartDashboard.putNumber("FL Initial Angle", FL.initial_angle);
+      SmartDashboard.putNumber("FR Initial Angle", FR.initial_angle);
+      SmartDashboard.putNumber("RL Initial Angle", RL.initial_angle);
+      SmartDashboard.putNumber("RR Initial Angle", RR.initial_angle);
+
   }
 }
