@@ -22,3 +22,8 @@ and don't move at all (which initiates the stop function, turning all the wheels
 individual variables through the drive class. This is because printing to the smartdashboard from the module class would indicate that all objects of the module class 
 would be overwriting one number on the smartdashboard. I think the conversions are going to need the most observing but working from the beginning with the kinematics 
 in the drive class would also be a good option.
+
+**Procedure**
+
+- I would begin by adding the probe variables that I mentioned where you deem necessary, and looking at the values that go into and out of each function and operator.
+- You may want to especially observe the angles that are produced by the kinematics for a repective angle of the joystick, and try to fix the "kinematicsToAngle" function if the values don't make sense.
