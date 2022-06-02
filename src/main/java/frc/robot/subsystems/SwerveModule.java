@@ -25,8 +25,9 @@ public class SwerveModule extends SubsystemBase {
   private TalonFX m_pivot;
   private CANCoder m_encoder;
 
-  public double initial_angle;
+  public double initial_angle;  // public debug variable is accessed from drive class
 
+  // the data type "Gains" defined in Gains.java
   private static Gains drivePID = new Gains(0.01,0,0,0,0);
   private static Gains pivotPID = new Gains(0.05,0,0,0,0);
 
@@ -62,63 +63,62 @@ public class SwerveModule extends SubsystemBase {
       m_drive.setSelectedSensorPosition(0);
       m_pivot.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
       m_pivot.setSelectedSensorPosition(Conversions.pivot_toNative(getEncoder()));
+
+      // debug - print initialization value given to pivot motors ^
       SmartDashboard.putNumber("initial angle", Conversions.pivot_toNative(getEncoder()));
   }
 
-          private double getEncoder() {
-            return m_encoder.getAbsolutePosition();
+  // Private functions used to interface with motors and encoders
+
+        private double getEncoder() {
+          return m_encoder.getAbsolutePosition();
+        } // get encoder absolute angle
+
+        private void setAngle(double angle) {
+          angle = Conversions.pivot_toNative(angle);
+          m_pivot.set(ControlMode.Position, angle);
+        } // set pivot position as non-absolute angle of wheel
+
+        private double getAngle() {
+          // double angle = m_pivot.getSelectedSensorPosition();
+          // return Conversions.pivot_toDegrees(angle);
+          return getEncoder();  // using the cancoder because pivot encoders jitter.
+        } // get pivot position as non-absolute angle of wheel
+
+        private void setVelocity(double velocity) {
+          velocity = Conversions.drive_toNative(velocity);
+          m_drive.set(ControlMode.Velocity, velocity);
+        } // set drive velocity as meters-per-second of wheel
+
+        private double getVelocity() {
+          double velocity = m_drive.getSelectedSensorVelocity();
+          return Conversions.drive_toVelocity(velocity);
+        } // get drive velocity as meters-per-second of wheel
+
+  // public interface for the module get, set, and stop
+
+        public SwerveModuleState getState() {
+          Rotation2d angle = Rotation2d.fromDegrees( Conversions.angle_toAbsolute( getAngle() ) );
+          double speedMetersPerSecond = getVelocity();
+          return new SwerveModuleState(speedMetersPerSecond, angle);
+        } // get module state with meters-per-second and absolute angle
+
+        public void setState(SwerveModuleState state) {
+          if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
+              setAngle( Conversions.kinematicsToAngle( getAngle(), state.angle.getDegrees() ) );
+              setVelocity( state.speedMetersPerSecond );
+          } else {
+              stop(); 
           }
+        } // set module state with meters-per-second and absolute angle
 
-          private void setAngle(double angle) {
-            angle = Conversions.pivot_toNative(angle);
-            m_pivot.set(ControlMode.Position, angle);
-          }
+        public void stop() {
+          setVelocity(0);
+          setAngle(0);
+        } // set module to 0 degrees and 0 meters-per-second
 
-          private double getAngle() {
-            // double angle = m_pivot.getSelectedSensorPosition();
-            // double temp = m_encoder.getAbsolutePosition() - Conversions.pivot_toDegrees(angle);
-            // SmartDashboard.putNumber("debug differnece", temp);
-            // return Conversions.pivot_toDegrees(angle);
-            return getEncoder();
-          }
-
-          private void setVelocity(double velocity) {
-            velocity = Conversions.drive_toNative(velocity);
-            m_drive.set(ControlMode.Velocity, velocity);
-          }
-
-          private double getVelocity() {
-            double velocity = m_drive.getSelectedSensorVelocity();
-            return Conversions.drive_toVelocity(velocity);
-          }
-
-  public SwerveModuleState getState() {
-    Rotation2d angle = Rotation2d.fromDegrees( Conversions.angle_toAbsolute( getAngle() ) );
-    double speedMetersPerSecond = getVelocity();
-    return new SwerveModuleState(speedMetersPerSecond, angle);
-  }
-
-  private int i = 0;
-
-  public void setState(SwerveModuleState state) {
-    i++;
-    SmartDashboard.putNumber("iterator", i);
-    SmartDashboard.putNumber("debugging for speed", state.speedMetersPerSecond);
-    if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
-        setAngle( Conversions.kinematicsToAngle( getAngle(), state.angle.getDegrees() ) );
-        setVelocity( state.speedMetersPerSecond );
-    } else {
-        stop(); 
-    }
-  }
-
-  public void stop() {
-    setVelocity(0);
-    setAngle(0);
-  }
+  // module periodic
 
   @Override
-  public void periodic() {
-
-  }
+  public void periodic() {}
 }

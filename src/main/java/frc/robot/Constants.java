@@ -33,7 +33,7 @@ public final class Constants {
 
         public static final int driver = 0;
         public static final int operator = 1;
-    }
+    }   // this should house id of devices
 
     public final class OI {
         public final class driver {
@@ -43,11 +43,11 @@ public final class Constants {
             public static final int FieldCentric = 3;
 
             public static final double Deadband = 0.05;
-        }
+        }   // this should house ports for driver
         public final class operator {
 
-        }
-    }
+        }   // this should house ports for operator
+    }   // this should house operator inpunt (controllers)
 
     public final class ModuleConstants {
         public static final double DRIVE_GEAR_RATIO = 7;
@@ -55,13 +55,13 @@ public final class Constants {
         public static final double ENCODER_TO_VELOCITY = 40*Math.PI/8062976;
         public static final double POSITION_TO_ANGLE = (double) 360/2048;    
         public static final double ENCODER_OFFSET = 270;   // degrees
-    }
+    }   // module constants 
 
     public final class DriveConstants {
         public static final double TRACK_WIDTH = 0.57785;   // meters
         public static final double WHEEL_BASE = 0.57785;    // meters
         public static final double MAX_VELOCITY = 4.5;      // meters per second
-    }
+    }   // drive constants
 
 
     public static final int timeout = 30;

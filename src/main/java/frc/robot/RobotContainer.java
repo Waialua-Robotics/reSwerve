@@ -33,7 +33,7 @@ public class RobotContainer {
                 () -> driver.getRawAxis(OI.driver.Yaxis),
                 () -> driver.getRawAxis(OI.driver.ROTaxis),
                 () -> !driver.getRawButton(OI.driver.FieldCentric)));
-
+        // these are your joystick lambdas
         configureButtonBindings();
   }
 
@@ -54,6 +54,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
+
+    // This command will not run
+    // Ignore
     Drive drive = new Drive(
       swerveDrive, 
       () -> -driver.getRawAxis(OI.driver.Xaxis), 

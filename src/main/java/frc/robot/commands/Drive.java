@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
+  // suppliers represent pointers to functions as far as im conserned
   private final SwerveDrive swerveDrive;
   private final Supplier<Double> get_x;
   private final Supplier<Double> get_y;
@@ -49,20 +50,20 @@ public class Drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double tempX = 0;
-    double tempY = 0;
-    if (get_x.get()>0.6) {
+    double tempX = 0; // the x is zero
+    double tempY = 0; // the y is zero
+    if (get_x.get()>0.6) {  
       tempY = 1.2;
-    }
+    } // set horizantal if passed threshold
     if (get_y.get()>0.6) {
       tempX = 1.2;
-    }
+    } // move vertical if passed threshold
     swerveDrive.drive(
       tempX,
       tempY,
       get_omega.get(),
       field_centric.get()); 
-  }
+  } // call the drive command
 
   // Called once the command ends or is interrupted.
   @Override

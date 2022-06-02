@@ -54,30 +54,29 @@ public class SwerveDrive extends SubsystemBase {
 
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-      rot = 0;
+      rot = 0;  // negate all rotation
       states = kinematics.toSwerveModuleStates(
             fieldRelative
               ? ChassisSpeeds.fromFieldRelativeSpeeds( xSpeed, ySpeed, rot, getYaw() ) 
               : new ChassisSpeeds(xSpeed, ySpeed, rot)
-      );
-
+      );  
       SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.MAX_VELOCITY);
-        FL.setState(states[0]);
-        FR.setState(states[1]);
-        RL.setState(states[2]);
-        RR.setState(states[3]);
-        SmartDashboard.putString("setFL", states[0].toString());
-        SmartDashboard.putString("setFR", states[1].toString());
-        SmartDashboard.putString("setRL", states[2].toString());
-        SmartDashboard.putString("setRR", states[3].toString());
-  }
+      FL.setState(states[0]); 
+      FR.setState(states[1]); 
+      RL.setState(states[2]); 
+      RR.setState(states[3]); 
+      SmartDashboard.putString("setFL", states[0].toString()); 
+      SmartDashboard.putString("setFR", states[1].toString()); 
+      SmartDashboard.putString("setRL", states[2].toString());
+      SmartDashboard.putString("setRR", states[3].toString()); 
+  } // query the kinematics for desired module states and set the modules to their corresponding state
 
   public void stop() {
     FL.stop();
     FR.stop();
     RL.stop();
     RR.stop();
-  }
+  } // calls stop on modules
 
   @Override
   public void periodic() {
@@ -87,7 +86,7 @@ public class SwerveDrive extends SubsystemBase {
           RL.getState(),
           FR.getState(),
           RR.getState()
-      );
+      );  // refresh module states
 
       SmartDashboard.putNumber("FR Velocity", FR.getState().speedMetersPerSecond );
       SmartDashboard.putNumber("FR Angle", FR.getState().angle.getDegrees() );
