@@ -62,10 +62,10 @@ public class SwerveModule extends SubsystemBase {
       m_drive.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
       m_drive.setSelectedSensorPosition(0);
       m_pivot.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
-      m_pivot.setSelectedSensorPosition(Conversions.pivot_toNative(getEncoder()));
+      m_pivot.setSelectedSensorPosition(Conversions.pivot_toTicks(getEncoder()));
 
       // debug - print initialization value given to pivot motors ^
-      SmartDashboard.putNumber("initial angle", Conversions.pivot_toNative(getEncoder()));
+      SmartDashboard.putNumber("initial angle", Conversions.pivot_toTicks(getEncoder()));
   }
 
   // Private functions used to interface with motors and encoders
@@ -75,14 +75,14 @@ public class SwerveModule extends SubsystemBase {
         } // get encoder absolute angle
 
         private void setAngle(double angle) {
-          angle = Conversions.pivot_toNative(angle);
           m_pivot.set(ControlMode.Position, angle);
+          SmartDashboard.putNumber("set angle value", angle );
         } // set pivot position as non-absolute angle of wheel
 
         private double getAngle() {
-          // double angle = m_pivot.getSelectedSensorPosition();
-          // return Conversions.pivot_toDegrees(angle);
-          return getEncoder();  // using the cancoder because pivot encoders jitter.
+          double FXTicks = m_pivot.getSelectedSensorPosition();
+          return FXTicks; //Conversions.pivot_toDegrees(angle);
+          //return getEncoder();  // using the cancoder because pivot encoders jitter.
         } // get pivot position as non-absolute angle of wheel
 
         private void setVelocity(double velocity) {
@@ -105,7 +105,7 @@ public class SwerveModule extends SubsystemBase {
 
         public void setState(SwerveModuleState state) {
           if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
-              setAngle( Conversions.kinematicsToAngle( getAngle(), state.angle.getDegrees() ) );
+              setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
               setVelocity( state.speedMetersPerSecond );
           } else {
               stop(); 

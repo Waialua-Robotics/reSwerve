@@ -17,26 +17,26 @@ import frc.robot.Constants.DriveConstants;
 
 public class SwerveDrive extends SubsystemBase {
 
-  private SwerveModule FL;
   private SwerveModule FR;
+  private SwerveModule FL;
   private SwerveModule RL;
   private SwerveModule RR;
 
-  private SwerveModuleState[] states;
+  public SwerveModuleState[] states;
 
   private static final double HalfWidth = DriveConstants.TRACK_WIDTH / 2; // chassis width
   private static final double HalfLength = DriveConstants.WHEEL_BASE / 2;   // chassis length
      
   public SwerveDrive() {
-      FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
-      FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
-      RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
-      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
+     FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
+     FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
+     RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
+     RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
   }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d(-HalfWidth,  HalfLength),
         new Translation2d( HalfWidth,  HalfLength),
+        new Translation2d(-HalfWidth,  HalfLength),
         new Translation2d(-HalfWidth, -HalfLength),
         new Translation2d( HalfWidth, -HalfLength)
   );
@@ -61,12 +61,13 @@ public class SwerveDrive extends SubsystemBase {
               : new ChassisSpeeds(xSpeed, ySpeed, rot)
       );  
       SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.MAX_VELOCITY);
-      FL.setState(states[0]); 
-      FR.setState(states[1]); 
+      // order of motores FR, FL, RL, RR
+      FR.setState(states[0]); 
+      FL.setState(states[1]); 
       RL.setState(states[2]); 
       RR.setState(states[3]); 
-      SmartDashboard.putString("setFL", states[0].toString()); 
-      SmartDashboard.putString("setFR", states[1].toString()); 
+      SmartDashboard.putString("setFR", states[0].toString()); 
+      SmartDashboard.putString("setFL", states[1].toString()); 
       SmartDashboard.putString("setRL", states[2].toString());
       SmartDashboard.putString("setRR", states[3].toString()); 
   } // query the kinematics for desired module states and set the modules to their corresponding state

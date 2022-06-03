@@ -15,13 +15,13 @@ package frc.robot;
 public final class Constants {
 
     public final class ID {
-        public static final int FLdrive = 11;
-        public static final int FLpivot = 21;
-        public static final int FLencoder = 1;
+        public static final int FLdrive = 12;
+        public static final int FLpivot = 22;
+        public static final int FLencoder = 2;
         
-        public static final int FRdrive = 12;
-        public static final int FRpivot = 22;
-        public static final int FRencoder = 2;
+        public static final int FRdrive = 11;
+        public static final int FRpivot = 21;
+        public static final int FRencoder = 1;
         
         public static final int RLdrive = 13;
         public static final int RLpivot = 23;
@@ -53,7 +53,7 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 7;
         public static final double PIVOT_GEAR_RATIO = 46;
         public static final double ENCODER_TO_VELOCITY = 40*Math.PI/8062976;
-        public static final double POSITION_TO_ANGLE = (double) 360/2048;    
+        public static final double TICKS_PER_DEGREE = (double) 2048/360;    
         public static final double ENCODER_OFFSET = 270;   // degrees
     }   // module constants 
 
