@@ -26,6 +26,7 @@ public class SwerveModule extends SubsystemBase {
   private CANCoder m_encoder;
 
   public double initial_angle;  // public debug variable is accessed from drive class
+  public double encoderAngle;
 
   // the data type "Gains" defined in Gains.java
   private static Gains drivePID = new Gains(0.01,0,0,0,0);
@@ -64,14 +65,19 @@ public class SwerveModule extends SubsystemBase {
       m_pivot.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
       m_pivot.setSelectedSensorPosition(Conversions.pivot_toTicks(getEncoder()));
 
+    
+
       // debug - print initialization value given to pivot motors ^
-      SmartDashboard.putNumber("initial angle", Conversions.pivot_toTicks(getEncoder()));
+      //SmartDashboard.putNumber("initial angle", m_encoder.getAbsolutePosition()); // Conversions.pivot_toTicks(getEncoder()))
+      
   }
 
   // Private functions used to interface with motors and encoders
 
         private double getEncoder() {
-          return m_encoder.getAbsolutePosition();
+          double encoderAngle = m_encoder.getAbsolutePosition();
+          SmartDashboard.putNumber("0_360 getencoder value",encoderAngle);
+          return encoderAngle;
         } // get encoder absolute angle
 
         private void setAngle(double angle) {
@@ -97,8 +103,10 @@ public class SwerveModule extends SubsystemBase {
 
   // public interface for the module get, set, and stop
 
+  
+
         public SwerveModuleState getState() {
-          Rotation2d angle = Rotation2d.fromDegrees( Conversions.angle_toAbsolute( getAngle() ) );
+          Rotation2d angle = Rotation2d.fromDegrees( getEncoder() );
           double speedMetersPerSecond = getVelocity();
           return new SwerveModuleState(speedMetersPerSecond, angle);
         } // get module state with meters-per-second and absolute angle
@@ -114,8 +122,10 @@ public class SwerveModule extends SubsystemBase {
 
         public void stop() {
           setVelocity(0);
-          setAngle(0);
+          setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
+          //setAngle(0);
         } // set module to 0 degrees and 0 meters-per-second
+
 
   // module periodic
 

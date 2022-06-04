@@ -101,10 +101,10 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putString("odometry", odometry.getPoseMeters().toString());
       SmartDashboard.putNumber("Yaw", getYaw().getDegrees() );
 
-      SmartDashboard.putNumber("FL Initial Angle", FL.initial_angle);
-      SmartDashboard.putNumber("FR Initial Angle", FR.initial_angle);
-      SmartDashboard.putNumber("RL Initial Angle", RL.initial_angle);
-      SmartDashboard.putNumber("RR Initial Angle", RR.initial_angle);
+      SmartDashboard.putNumber("FL Initial Angle", FL.encoderAngle);
+      SmartDashboard.putNumber("FR Initial Angle", FR.encoderAngle);
+      SmartDashboard.putNumber("RL Initial Angle", RL.encoderAngle);
+      SmartDashboard.putNumber("RR Initial Angle", RR.encoderAngle);
 
   }
 }

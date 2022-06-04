@@ -39,12 +39,20 @@ public class Conversions {
         return degrees;
     }   // convert non-absolute angle to absolute angle
 
+    public static double possitiveNegitive180_to360 (double desired) {
+        if (desired < 0) {
+            desired += 360;
+        }
+        return desired;
+    }
+
     public static double FXDesired (double current, double desired, double FXTicks) {
+        desired =  Conversions.possitiveNegitive180_to360(desired);
         double error = current-desired; 
         error = pivot_toTicks(error);
-        current += error;
+        FXTicks += error;
         //desired = ( 450 + desired ) %  360;
         SmartDashboard.putNumber("desired angle", desired);
-        return current;
+        return FXTicks;
     }   // convert the kinematics angle to angle of the wheel. This should be reprogrammmed if possible
 }

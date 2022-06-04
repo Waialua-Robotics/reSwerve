@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /** An example command that uses an example subsystem. */
 public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -52,17 +54,19 @@ public class Drive extends CommandBase {
   public void execute() {
     double tempX = 0; // the x is zero
     double tempY = 0; // the y is zero
-    if (abs(get_x.get())>0.1) {  
+    if (Math.abs(get_x.get())>0.1) {  
       tempX = get_x.get();
     } // set horizantal if passed threshold
-    if (get_y.get()>0.6) {
-      tempY = .5;
+    if (Math.abs(get_y.get())>0.1) {
+      tempY = get_y.get();
     } // move vertical if passed threshold
     swerveDrive.drive(
       tempX,
       tempY,
       get_omega.get(),
       field_centric.get()); 
+      SmartDashboard.putNumber("JOYX", tempX);
+      SmartDashboard.putNumber("JOYY", tempY);
   } // call the drive command
 
   // Called once the command ends or is interrupted.
