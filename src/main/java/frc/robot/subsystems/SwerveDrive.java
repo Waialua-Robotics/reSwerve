@@ -17,8 +17,8 @@ import frc.robot.Constants.DriveConstants;
 
 public class SwerveDrive extends SubsystemBase {
 
-  private SwerveModule FR;
   private SwerveModule FL;
+  private SwerveModule FR;
   private SwerveModule RL;
   private SwerveModule RR;
 
@@ -28,15 +28,15 @@ public class SwerveDrive extends SubsystemBase {
   private static final double HalfLength = DriveConstants.WHEEL_BASE / 2;   // chassis length
      
   public SwerveDrive() {
-     FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
      FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
+     FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
      RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
   }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+        new Translation2d( -HalfWidth,  HalfLength),
         new Translation2d( HalfWidth,  HalfLength),
-        new Translation2d(-HalfWidth,  HalfLength),
         new Translation2d(-HalfWidth, -HalfLength),
         new Translation2d( HalfWidth, -HalfLength)
   );
@@ -62,12 +62,12 @@ public class SwerveDrive extends SubsystemBase {
       );  
       SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.MAX_VELOCITY);
       // order of motores FR, FL, RL, RR
-      FR.setState(states[0]); 
-      FL.setState(states[1]); 
-      RL.setState(states[2]); 
-      RR.setState(states[3]); 
-      SmartDashboard.putString("setFR", states[0].toString()); 
-      SmartDashboard.putString("setFL", states[1].toString()); 
+      FL.setDesiredState(states[0]); 
+      FR.setDesiredState(states[1]); 
+      RL.setDesiredState(states[2]); 
+      RR.setDesiredState(states[3]); 
+      SmartDashboard.putString("setFL", states[0].toString()); 
+      SmartDashboard.putString("setFR", states[1].toString()); 
       SmartDashboard.putString("setRL", states[2].toString());
       SmartDashboard.putString("setRR", states[3].toString()); 
   } // query the kinematics for desired module states and set the modules to their corresponding state
@@ -84,8 +84,8 @@ public class SwerveDrive extends SubsystemBase {
       odometry.update(
           getYaw(), 
           FL.getState(),
-          RL.getState(),
           FR.getState(),
+          RL.getState(),
           RR.getState()
       );  // refresh module states
 

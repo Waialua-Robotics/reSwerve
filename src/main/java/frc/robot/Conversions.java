@@ -46,6 +46,13 @@ public class Conversions {
         return desired;
     }
 
+    public static double zero360to_PlusMinus180 (double angle) {
+        if (angle > 180) {
+            angle -= 360;
+        }
+        return angle;
+    }
+
     public static double FXDesired (double current, double desired, double FXTicks) {
         desired =  Conversions.possitiveNegitive180_to360(desired);
         double error = current-desired; 

@@ -101,17 +101,28 @@ public class SwerveModule extends SubsystemBase {
           return Conversions.drive_toVelocity(velocity);
         } // get drive velocity as meters-per-second of wheel
 
+                
   // public interface for the module get, set, and stop
 
   
 
         public SwerveModuleState getState() {
-          Rotation2d angle = Rotation2d.fromDegrees( getEncoder() );
+          Rotation2d angle = Rotation2d.fromDegrees(getEncoder());
           double speedMetersPerSecond = getVelocity();
           return new SwerveModuleState(speedMetersPerSecond, angle);
         } // get module state with meters-per-second and absolute angle
 
-        public void setState(SwerveModuleState state) {
+        public void setDesiredState(SwerveModuleState desiredState) {
+
+          // Optimize the reference state to avoid spinning further than 90 degrees
+          Rotation2d angle = Rotation2d.fromDegrees(getEncoder());
+          
+          SwerveModuleState state =
+             SwerveModuleState.optimize(desiredState, angle);
+
+             SmartDashboard.putNumber("converted angle", Conversions.zero360to_PlusMinus180(getEncoder()) );
+             SmartDashboard.putNumber("state angle degress", state.angle.getDegrees() );
+                   
           if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
               setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
               setVelocity( state.speedMetersPerSecond );
@@ -119,10 +130,9 @@ public class SwerveModule extends SubsystemBase {
               stop(); 
           }
         } // set module state with meters-per-second and absolute angle
-
         public void stop() {
           setVelocity(0);
-          setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
+          //setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
           //setAngle(0);
         } // set module to 0 degrees and 0 meters-per-second
 
