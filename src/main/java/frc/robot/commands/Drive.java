@@ -50,16 +50,18 @@ public class Drive extends CommandBase {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
-  @Override
+  double tempX = 0; // the x is zero
+  double tempY = 0; // the y is zero 
+  
+  @Override 
   public void execute() {
-    double tempX = 0; // the x is zero
-    double tempY = 0; // the y is zero
-    if (Math.abs(get_x.get())>0.1) {  
-      tempX = get_x.get();
-    } // set horizantal if passed threshold
-    if (Math.abs(get_y.get())>0.1) {
-      tempY = get_y.get();
-    } // move vertical if passed threshold
+    tempX = get_x.get();
+    tempX *= -1;
+    tempX *= .25;
+     // set horizantal if passed threshold
+    tempY = get_y.get();
+    tempY *= .25;
+     // move vertical if passed threshold
     swerveDrive.drive(
       tempX,
       tempY,
