@@ -19,17 +19,18 @@ public class Conversions {
 
     public static double pivot_toDegrees(double encoder_units) {
         encoder_units /= ModuleConstants.PIVOT_GEAR_RATIO;
-        encoder_units *= ModuleConstants.POSITION_TO_ANGLE; 
+        encoder_units *= ModuleConstants.TICKS_PER_DEGREE; 
         return encoder_units;
-    }   // convert native pivot position to non-absolute angle of wheel
+    }   // cancoder abs to motor enconder value
 
-    public static double pivot_toNative(double degrees) {
+
+    public static double pivot_toTicks(double degrees) {
         SmartDashboard.putNumber("pton", degrees);
-        degrees /= ModuleConstants.POSITION_TO_ANGLE;
+        degrees *= ModuleConstants.TICKS_PER_DEGREE;
         degrees *= ModuleConstants.PIVOT_GEAR_RATIO;
         SmartDashboard.putNumber("pton2", degrees);
         return degrees;
-    }   // convert angle of wheel to non-absolute angle of wheel
+    }  // FX Tick
 
     public static double angle_toAbsolute(double degrees) {
         degrees %= 360;
@@ -38,19 +39,31 @@ public class Conversions {
         return degrees;
     }   // convert non-absolute angle to absolute angle
 
-    public static double degree_operator(double current, double desired) {
-        double error = current-desired;
-        double sign = -Math.signum(error);
-        double abs = Math.abs(error);
-        if (abs>180) {error = (360-abs)*(sign);}
-        return error;
-    }   // convert current and desired angle to an angle that can be added to current to get to desired
+    public static double possitiveNegitive180_to360 (double desired) {
+        if (desired < 0) {
+            desired += 360;
+        }
+        return desired;
+    }
 
-    public static double kinematicsToAngle(double current, double desired) {
-        double absolute = angle_toAbsolute(current);
-        desired = ( 450 + desired ) %  360;
-        current += degree_operator(absolute, desired);
+    public static double zero360to_PlusMinus180 (double angle) {
+        if (angle > 180) {
+            angle -= 360;
+        }
+        return angle;
+    }
+
+     public static double minChange(double a, double b, double wrap) {
+        return Math.IEEEremainder(a - b, wrap);
+    }
+
+    public static double FXDesired (double current, double desired, double FXTicks) {
+        //desired =  Conversions.possitiveNegitive180_to360(desired);
+        double error = current-desired; 
+        error = pivot_toTicks(error);
+        FXTicks += error;
+        //desired = ( 450 + desired ) %  360;
         SmartDashboard.putNumber("desired angle", desired);
-        return current;
+        return FXTicks;
     }   // convert the kinematics angle to angle of the wheel. This should be reprogrammmed if possible
 }

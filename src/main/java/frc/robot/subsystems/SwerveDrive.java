@@ -22,23 +22,24 @@ public class SwerveDrive extends SubsystemBase {
   private SwerveModule RL;
   private SwerveModule RR;
 
-  private SwerveModuleState[] states;
+  public SwerveModuleState[] states;
 
   private static final double HalfWidth = DriveConstants.TRACK_WIDTH / 2; // chassis width
   private static final double HalfLength = DriveConstants.WHEEL_BASE / 2;   // chassis length
      
   public SwerveDrive() {
-      FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
-      FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
-      RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
-      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
-  }
+     FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, true);
+     FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
+     RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
+     RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, false);
+       }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d(-HalfWidth,  HalfLength),
+    //was -+, ++, --, +-
         new Translation2d( HalfWidth,  HalfLength),
-        new Translation2d(-HalfWidth, -HalfLength),
-        new Translation2d( HalfWidth, -HalfLength)
+        new Translation2d( HalfWidth,  -HalfLength),
+        new Translation2d(-HalfWidth, HalfLength),
+        new Translation2d( -HalfWidth, -HalfLength)
   );
 
   private SwerveDriveOdometry odometry = new SwerveDriveOdometry(
@@ -54,6 +55,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    SmartDashboard.putBoolean("field Relative", fieldRelative);
       rot = 0;  // negate all rotation
       states = kinematics.toSwerveModuleStates(
             fieldRelative
@@ -61,10 +63,11 @@ public class SwerveDrive extends SubsystemBase {
               : new ChassisSpeeds(xSpeed, ySpeed, rot)
       );  
       SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.MAX_VELOCITY);
-      FL.setState(states[0]); 
-      FR.setState(states[1]); 
-      RL.setState(states[2]); 
-      RR.setState(states[3]); 
+      // order of motores FR, FL, RL, RR
+      FL.setDesiredState(states[0]); 
+      FR.setDesiredState(states[1]); 
+      RL.setDesiredState(states[2]); 
+      RR.setDesiredState(states[3]); 
       SmartDashboard.putString("setFL", states[0].toString()); 
       SmartDashboard.putString("setFR", states[1].toString()); 
       SmartDashboard.putString("setRL", states[2].toString());
@@ -83,8 +86,8 @@ public class SwerveDrive extends SubsystemBase {
       odometry.update(
           getYaw(), 
           FL.getState(),
-          RL.getState(),
           FR.getState(),
+          RL.getState(),
           RR.getState()
       );  // refresh module states
 
@@ -100,10 +103,10 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putString("odometry", odometry.getPoseMeters().toString());
       SmartDashboard.putNumber("Yaw", getYaw().getDegrees() );
 
-      SmartDashboard.putNumber("FL Initial Angle", FL.initial_angle);
-      SmartDashboard.putNumber("FR Initial Angle", FR.initial_angle);
-      SmartDashboard.putNumber("RL Initial Angle", RL.initial_angle);
-      SmartDashboard.putNumber("RR Initial Angle", RR.initial_angle);
+      SmartDashboard.putNumber("FL Initial Angle", FL.encoderAngle);
+      SmartDashboard.putNumber("FR Initial Angle", FR.encoderAngle);
+      SmartDashboard.putNumber("RL Initial Angle", RL.encoderAngle);
+      SmartDashboard.putNumber("RR Initial Angle", RR.encoderAngle);
 
   }
 }

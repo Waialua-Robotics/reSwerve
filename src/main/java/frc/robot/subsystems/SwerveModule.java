@@ -26,6 +26,7 @@ public class SwerveModule extends SubsystemBase {
   private CANCoder m_encoder;
 
   public double initial_angle;  // public debug variable is accessed from drive class
+  public double encoderAngle;
 
   // the data type "Gains" defined in Gains.java
   private static Gains drivePID = new Gains(0.01,0,0,0,0);
@@ -62,27 +63,32 @@ public class SwerveModule extends SubsystemBase {
       m_drive.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
       m_drive.setSelectedSensorPosition(0);
       m_pivot.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.timeout);
-      m_pivot.setSelectedSensorPosition(Conversions.pivot_toNative(getEncoder()));
+      m_pivot.setSelectedSensorPosition(Conversions.pivot_toTicks(getEncoder()));
+
+    
 
       // debug - print initialization value given to pivot motors ^
-      SmartDashboard.putNumber("initial angle", Conversions.pivot_toNative(getEncoder()));
+      //SmartDashboard.putNumber("initial angle", m_encoder.getAbsolutePosition()); // Conversions.pivot_toTicks(getEncoder()))
+      
   }
 
   // Private functions used to interface with motors and encoders
 
         private double getEncoder() {
-          return m_encoder.getAbsolutePosition();
+          double encoderAngle = m_encoder.getAbsolutePosition();
+          SmartDashboard.putNumber("0_360 getencoder value",encoderAngle);
+          return encoderAngle;
         } // get encoder absolute angle
 
         private void setAngle(double angle) {
-          angle = Conversions.pivot_toNative(angle);
           m_pivot.set(ControlMode.Position, angle);
+          SmartDashboard.putNumber("set angle value", angle );
         } // set pivot position as non-absolute angle of wheel
 
         private double getAngle() {
-          // double angle = m_pivot.getSelectedSensorPosition();
-          // return Conversions.pivot_toDegrees(angle);
-          return getEncoder();  // using the cancoder because pivot encoders jitter.
+          double FXTicks = m_pivot.getSelectedSensorPosition();
+          return FXTicks; //Conversions.pivot_toDegrees(angle);
+          //return getEncoder();  // using the cancoder because pivot encoders jitter.
         } // get pivot position as non-absolute angle of wheel
 
         private void setVelocity(double velocity) {
@@ -95,27 +101,51 @@ public class SwerveModule extends SubsystemBase {
           return Conversions.drive_toVelocity(velocity);
         } // get drive velocity as meters-per-second of wheel
 
+                
   // public interface for the module get, set, and stop
 
+  
+
         public SwerveModuleState getState() {
-          Rotation2d angle = Rotation2d.fromDegrees( Conversions.angle_toAbsolute( getAngle() ) );
+          Rotation2d angle = Rotation2d.fromDegrees(getEncoder());
           double speedMetersPerSecond = getVelocity();
           return new SwerveModuleState(speedMetersPerSecond, angle);
         } // get module state with meters-per-second and absolute angle
 
-        public void setState(SwerveModuleState state) {
-          if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
-              setAngle( Conversions.kinematicsToAngle( getAngle(), state.angle.getDegrees() ) );
-              setVelocity( state.speedMetersPerSecond );
-          } else {
-              stop(); 
+        public void setDesiredState(SwerveModuleState desiredState) {
+          //https://www.chiefdelphi.com/t/programming-wheel-angles-in-swerve-drive/372628/8
+          // Optimize the reference state to avoid spinning further than 90 degrees
+          final double speedMultiplier;
+
+    final double wrap = 360.0; // in encoder counts
+    final double current = getEncoder();
+    final double desired = Conversions.possitiveNegitive180_to360(desiredState.angle.getDegrees()); // desired in 0-360
+
+
+    if(true){
+        final double newPosition = Conversions.minChange(desired, current, wrap / 2.0) + current;
+        if(Math.abs(Conversions.minChange(newPosition, desired, wrap)) < .001){ // check if equal
+            speedMultiplier = 1;
+        } else {
+            speedMultiplier = -1;
+        }
+        setVelocity( desiredState.speedMetersPerSecond * speedMultiplier);
+        setAngle(Conversions.FXDesired(current, newPosition, getAngle()));
+    } else {
+        speedMultiplier = 1;
+        final double newPosition = Conversions.minChange(desired, current, wrap) + current;
+        setVelocity( desiredState.speedMetersPerSecond * speedMultiplier);
+        setAngle(Conversions.FXDesired(current, newPosition, getAngle()));
+    }
+       
           }
-        } // set module state with meters-per-second and absolute angle
 
         public void stop() {
           setVelocity(0);
-          setAngle(0);
+          //setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
+          //setAngle(0);
         } // set module to 0 degrees and 0 meters-per-second
+
 
   // module periodic
 

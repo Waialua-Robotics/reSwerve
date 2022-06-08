@@ -15,21 +15,21 @@ package frc.robot;
 public final class Constants {
 
     public final class ID {
-        public static final int FLdrive = 11;
-        public static final int FLpivot = 21;
-        public static final int FLencoder = 1;
+        public static final int FLdrive = 13;
+        public static final int FLpivot = 23;
+        public static final int FLencoder = 3;
         
         public static final int FRdrive = 12;
         public static final int FRpivot = 22;
         public static final int FRencoder = 2;
         
-        public static final int RLdrive = 13;
-        public static final int RLpivot = 23;
-        public static final int RLencoder = 3;
+        public static final int RLdrive = 14;
+        public static final int RLpivot = 24;
+        public static final int RLencoder = 4;
 
-        public static final int RRdrive = 14;
-        public static final int RRpivot = 24;
-        public static final int RRencoder = 4;
+        public static final int RRdrive = 11;
+        public static final int RRpivot = 21;
+        public static final int RRencoder = 1;
 
         public static final int driver = 0;
         public static final int operator = 1;
@@ -53,14 +53,14 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 7;
         public static final double PIVOT_GEAR_RATIO = 46;
         public static final double ENCODER_TO_VELOCITY = 40*Math.PI/8062976;
-        public static final double POSITION_TO_ANGLE = (double) 360/2048;    
+        public static final double TICKS_PER_DEGREE = (double) 2048/360;    
         public static final double ENCODER_OFFSET = 270;   // degrees
     }   // module constants 
 
     public final class DriveConstants {
         public static final double TRACK_WIDTH = 0.57785;   // meters
         public static final double WHEEL_BASE = 0.57785;    // meters
-        public static final double MAX_VELOCITY = 4.5;      // meters per second
+        public static final double MAX_VELOCITY = 4.5;      // meters per second was 4.5
     }   // drive constants
 
 
