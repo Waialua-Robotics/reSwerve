@@ -113,12 +113,12 @@ public class SwerveModule extends SubsystemBase {
         } // get module state with meters-per-second and absolute angle
 
         public void setDesiredState(SwerveModuleState desiredState) {
-
           // Optimize the reference state to avoid spinning further than 90 degrees
-          Rotation2d angle = Rotation2d.fromDegrees(getEncoder());
+          Rotation2d angle = Rotation2d.fromDegrees(Conversions.zero360to_PlusMinus180(getEncoder()));
+          SmartDashboard.putNumber("rotation2d value",angle.getDegrees());
           
           SwerveModuleState state =
-             SwerveModuleState.optimize(desiredState, angle);
+             SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getEncoder()));
 
              SmartDashboard.putNumber("converted angle", Conversions.zero360to_PlusMinus180(getEncoder()) );
              SmartDashboard.putNumber("state angle degress", state.angle.getDegrees() );

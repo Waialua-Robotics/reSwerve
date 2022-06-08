@@ -56,11 +56,8 @@ public class Drive extends CommandBase {
   @Override 
   public void execute() {
     tempX = get_x.get();
-    tempX *= -1;
-    tempX *= .25;
-     // set horizantal if passed threshold
+         // set horizantal if passed threshold
     tempY = get_y.get();
-    tempY *= .25;
      // move vertical if passed threshold
     swerveDrive.drive(
       tempX,

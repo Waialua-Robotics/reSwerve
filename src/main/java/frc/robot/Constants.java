@@ -15,21 +15,21 @@ package frc.robot;
 public final class Constants {
 
     public final class ID {
-        public static final int FLdrive = 12;
-        public static final int FLpivot = 22;
-        public static final int FLencoder = 2;
+        public static final int FLdrive = 13;
+        public static final int FLpivot = 23;
+        public static final int FLencoder = 3;
         
-        public static final int FRdrive = 11;
-        public static final int FRpivot = 21;
-        public static final int FRencoder = 1;
+        public static final int FRdrive = 12;
+        public static final int FRpivot = 22;
+        public static final int FRencoder = 2;
         
-        public static final int RLdrive = 13;
-        public static final int RLpivot = 23;
-        public static final int RLencoder = 3;
+        public static final int RLdrive = 14;
+        public static final int RLpivot = 24;
+        public static final int RLencoder = 4;
 
-        public static final int RRdrive = 14;
-        public static final int RRpivot = 24;
-        public static final int RRencoder = 4;
+        public static final int RRdrive = 11;
+        public static final int RRpivot = 21;
+        public static final int RRencoder = 1;
 
         public static final int driver = 0;
         public static final int operator = 1;

@@ -32,13 +32,14 @@ public class SwerveDrive extends SubsystemBase {
      FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
      RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
      RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
-  }
+       }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d( -HalfWidth,  HalfLength),
+    //was -+, ++, --, +-
         new Translation2d( HalfWidth,  HalfLength),
-        new Translation2d(-HalfWidth, -HalfLength),
-        new Translation2d( HalfWidth, -HalfLength)
+        new Translation2d( HalfWidth,  -HalfLength),
+        new Translation2d(-HalfWidth, HalfLength),
+        new Translation2d( -HalfWidth, -HalfLength)
   );
 
   private SwerveDriveOdometry odometry = new SwerveDriveOdometry(
