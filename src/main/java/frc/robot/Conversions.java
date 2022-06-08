@@ -53,8 +53,12 @@ public class Conversions {
         return angle;
     }
 
+     public static double minChange(double a, double b, double wrap) {
+        return Math.IEEEremainder(a - b, wrap);
+    }
+
     public static double FXDesired (double current, double desired, double FXTicks) {
-        desired =  Conversions.possitiveNegitive180_to360(desired);
+        //desired =  Conversions.possitiveNegitive180_to360(desired);
         double error = current-desired; 
         error = pivot_toTicks(error);
         FXTicks += error;

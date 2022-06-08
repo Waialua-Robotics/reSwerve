@@ -28,10 +28,10 @@ public class SwerveDrive extends SubsystemBase {
   private static final double HalfLength = DriveConstants.WHEEL_BASE / 2;   // chassis length
      
   public SwerveDrive() {
-     FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, false);
+     FL = new SwerveModule(ID.FLdrive, ID.FLpivot, ID.FLencoder, true);
      FR = new SwerveModule(ID.FRdrive, ID.FRpivot, ID.FRencoder, true);
      RL = new SwerveModule(ID.RLdrive, ID.RLpivot, ID.RLencoder, false);
-     RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, true);
+     RR = new SwerveModule(ID.RRdrive, ID.RRpivot, ID.RRencoder, false);
        }
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -55,6 +55,7 @@ public class SwerveDrive extends SubsystemBase {
 
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    SmartDashboard.putBoolean("field Relative", fieldRelative);
       rot = 0;  // negate all rotation
       states = kinematics.toSwerveModuleStates(
             fieldRelative

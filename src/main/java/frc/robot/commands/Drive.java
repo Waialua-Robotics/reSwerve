@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.function.DoubleSupplier;
+
 /** An example command that uses an example subsystem. */
 public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -45,6 +47,29 @@ public class Drive extends CommandBase {
     addRequirements(swerveDrive);
   }
 
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
+  
+  private static double modifyAxisCubed(double value) {
+
+    // Deadband
+    value = deadband(value, 0.05);
+
+    // Cube the axis
+    value = Math.copySign(value * value * value, value);
+
+    return value;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
@@ -55,9 +80,10 @@ public class Drive extends CommandBase {
   
   @Override 
   public void execute() {
-    tempX = get_x.get();
+    tempX = modifyAxisCubed(get_x.get());
+    tempX *= -1;
          // set horizantal if passed threshold
-    tempY = get_y.get();
+    tempY = modifyAxisCubed(get_y.get());
      // move vertical if passed threshold
     swerveDrive.drive(
       tempX,

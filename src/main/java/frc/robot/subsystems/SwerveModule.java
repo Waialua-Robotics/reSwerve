@@ -113,23 +113,33 @@ public class SwerveModule extends SubsystemBase {
         } // get module state with meters-per-second and absolute angle
 
         public void setDesiredState(SwerveModuleState desiredState) {
+          //https://www.chiefdelphi.com/t/programming-wheel-angles-in-swerve-drive/372628/8
           // Optimize the reference state to avoid spinning further than 90 degrees
-          Rotation2d angle = Rotation2d.fromDegrees(Conversions.zero360to_PlusMinus180(getEncoder()));
-          SmartDashboard.putNumber("rotation2d value",angle.getDegrees());
-          
-          SwerveModuleState state =
-             SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getEncoder()));
+          final double speedMultiplier;
 
-             SmartDashboard.putNumber("converted angle", Conversions.zero360to_PlusMinus180(getEncoder()) );
-             SmartDashboard.putNumber("state angle degress", state.angle.getDegrees() );
-                   
-          if ( Math.abs( state.speedMetersPerSecond ) > 0.1 ) {
-              setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );
-              setVelocity( state.speedMetersPerSecond );
-          } else {
-              stop(); 
+    final double wrap = 360.0; // in encoder counts
+    final double current = getEncoder();
+    final double desired = Conversions.possitiveNegitive180_to360(desiredState.angle.getDegrees()); // desired in 0-360
+
+
+    if(true){
+        final double newPosition = Conversions.minChange(desired, current, wrap / 2.0) + current;
+        if(Math.abs(Conversions.minChange(newPosition, desired, wrap)) < .001){ // check if equal
+            speedMultiplier = 1;
+        } else {
+            speedMultiplier = -1;
+        }
+        setVelocity( desiredState.speedMetersPerSecond * speedMultiplier);
+        setAngle(Conversions.FXDesired(current, newPosition, getAngle()));
+    } else {
+        speedMultiplier = 1;
+        final double newPosition = Conversions.minChange(desired, current, wrap) + current;
+        setVelocity( desiredState.speedMetersPerSecond * speedMultiplier);
+        setAngle(Conversions.FXDesired(current, newPosition, getAngle()));
+    }
+       
           }
-        } // set module state with meters-per-second and absolute angle
+
         public void stop() {
           setVelocity(0);
           //setAngle( Conversions.FXDesired( getEncoder(), state.angle.getDegrees(), getAngle() ) );

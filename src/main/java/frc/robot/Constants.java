@@ -60,7 +60,7 @@ public final class Constants {
     public final class DriveConstants {
         public static final double TRACK_WIDTH = 0.57785;   // meters
         public static final double WHEEL_BASE = 0.57785;    // meters
-        public static final double MAX_VELOCITY = 4.5;      // meters per second
+        public static final double MAX_VELOCITY = 4.5;      // meters per second was 4.5
     }   // drive constants
 
 
