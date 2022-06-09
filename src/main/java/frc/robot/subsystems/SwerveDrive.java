@@ -14,8 +14,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.DriveConstants;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public class SwerveDrive extends SubsystemBase {
+
+  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
   private SwerveModule FL;
   private SwerveModule FR;
@@ -43,15 +49,15 @@ public class SwerveDrive extends SubsystemBase {
   );
 
   private SwerveDriveOdometry odometry = new SwerveDriveOdometry(
-        kinematics, 
-        Rotation2d.fromDegrees( getYaw().getDegrees() )
-  );
+        kinematics, m_gyro.getRotation2d());
 
-  public Rotation2d getYaw() {
-    return Rotation2d.fromDegrees( 0 );
+  /*public Rotation2d getYaw() {
+    return m_gyro.getAngle;
+  }*/
+
+  public void zeroYaw() {
+      m_gyro.reset();
   }
-
-  public void zeroYaw() {}
 
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
@@ -59,7 +65,7 @@ public class SwerveDrive extends SubsystemBase {
       rot = 0;  // negate all rotation
       states = kinematics.toSwerveModuleStates(
             fieldRelative
-              ? ChassisSpeeds.fromFieldRelativeSpeeds( xSpeed, ySpeed, rot, getYaw() ) 
+              ? ChassisSpeeds.fromFieldRelativeSpeeds( xSpeed, ySpeed, rot, m_gyro.getRotation2d()) 
               : new ChassisSpeeds(xSpeed, ySpeed, rot)
       );  
       SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.MAX_VELOCITY);
@@ -81,10 +87,20 @@ public class SwerveDrive extends SubsystemBase {
     RR.stop();
   } // calls stop on modules
 
+  public double heading() {
+    return m_gyro.getAngle() % 360;
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    odometry.resetPosition(pose, m_gyro.getRotation2d());
+  }
+
+
+
   @Override
   public void periodic() {
       odometry.update(
-          getYaw(), 
+          m_gyro.getRotation2d(), 
           FL.getState(),
           FR.getState(),
           RL.getState(),
@@ -101,7 +117,7 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putNumber("RR Angle", RR.getState().angle.getDegrees() );
 
       SmartDashboard.putString("odometry", odometry.getPoseMeters().toString());
-      SmartDashboard.putNumber("Yaw", getYaw().getDegrees() );
+      SmartDashboard.putNumber("Yaw", heading());
 
       SmartDashboard.putNumber("FL Initial Angle", FL.encoderAngle);
       SmartDashboard.putNumber("FR Initial Angle", FR.encoderAngle);
