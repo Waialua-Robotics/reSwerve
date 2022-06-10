@@ -62,7 +62,6 @@ public class SwerveDrive extends SubsystemBase {
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     SmartDashboard.putBoolean("field Relative", fieldRelative);
-      rot = 0;  // negate all rotation
       states = kinematics.toSwerveModuleStates(
             fieldRelative
               ? ChassisSpeeds.fromFieldRelativeSpeeds( xSpeed, ySpeed, rot, m_gyro.getRotation2d()) 

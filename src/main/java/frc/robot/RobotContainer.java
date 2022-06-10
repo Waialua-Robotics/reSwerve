@@ -24,6 +24,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Joystick driver = new Joystick(ID.driver); 
+  private final GenericHID knob = new GenericHID(ID.knob);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -45,7 +46,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(driver, 2).whenPressed(() -> swerveDrive.zeroYaw());
+    //new JoystickButton(driver, 1).WhenPressed(()-> swerveDrive.resetOdometry(Pose2d 0,0));
   }
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

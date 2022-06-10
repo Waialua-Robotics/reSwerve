@@ -33,6 +33,7 @@ public final class Constants {
 
         public static final int driver = 0;
         public static final int operator = 1;
+        public static final int knob = 2;
     }   // this should house id of devices
 
     public final class OI {
@@ -46,8 +47,13 @@ public final class Constants {
         }   // this should house ports for driver
         public final class operator {
 
-        }   // this should house ports for operator
-    }   // this should house operator inpunt (controllers)
+        } 
+          // this should house ports for operator
+          // this should house operator inpunt (controllers)
+        public final class Knob {
+
+        }
+    }  
 
     public final class ModuleConstants {
         public static final double DRIVE_GEAR_RATIO = 7;

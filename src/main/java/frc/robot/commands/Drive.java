@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.DoubleSupplier;
 
+import frc.robot.Constants.OI;
+
 /** An example command that uses an example subsystem. */
 public class Drive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -36,7 +38,7 @@ public class Drive extends CommandBase {
       Supplier<Double> get_y, 
       Supplier<Double> get_omega, 
       Supplier<Boolean> field_centric
-      ) {
+          ) {
 
     this.get_x = get_x;
     this.get_y = get_y;
@@ -46,6 +48,7 @@ public class Drive extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerveDrive);
   }
+
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
@@ -62,7 +65,7 @@ public class Drive extends CommandBase {
   private static double modifyAxisCubed(double value) {
 
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, OI.driver.Deadband);
 
     // Cube the axis
     value = Math.copySign(value * value * value, value);
@@ -92,6 +95,7 @@ public class Drive extends CommandBase {
       field_centric.get()); 
       SmartDashboard.putNumber("JOYX", tempX);
       SmartDashboard.putNumber("JOYY", tempY);
+      SmartDashboard.putNumber("Omega", get_omega.get());
   } // call the drive command
 
   // Called once the command ends or is interrupted.
